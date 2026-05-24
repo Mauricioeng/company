@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ecossistema 369 - Tecnologia e Infoprodutos</title>
+    <title>CORESYS3 - Tecnologia e Infoprodutos</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -55,7 +55,7 @@
             const chatOptions = ['Dúvida sobre E-books', 'Planos do System369', 'Falar com Atendimento'];
 
             useEffect(() => {
-                setChatMessages([{ sender: 'bot', text: 'Olá! Bem-vindo ao Ecossistema 369. Sou seu assistente virtual. Como posso ajudar nas suas compras hoje?' }]);
+                setChatMessages([{ sender: 'bot', text: 'Olá! Bem-vindo ao CORESYS3. Sou seu assistente virtual. Como posso ajudar nas suas compras hoje?' }]);
             }, []);
 
             useEffect(() => {
@@ -91,7 +91,7 @@
                                 <svg className="w-8 h-8 text-[#00A650]" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
                                 </svg>
-                                <span className="text-2xl font-black text-white tracking-tight">ECOSSISTEMA<span className="text-[#00A650]">369</span></span>
+                                <span className="text-2xl font-black text-white tracking-tight">CORESYS3</span>
                             </a>
                             
                             {/* Busca (Gatilho de Marketplace) */}
@@ -127,24 +127,24 @@
                                     Soluções escaláveis em <span className="text-[#0052CC]">SaaS</span> e <span className="text-[#0052CC]">Infoprodutos</span>.
                                 </h1>
                                 <p className="text-gray-600 text-lg mb-8">
-                                    Desenvolvido por Maurício, estudante de Engenharia da Computação. O Ecossistema 369 une infraestrutura robusta para o seu negócio e conteúdos validados para o seu desenvolvimento.
+                                  O Ecossistema CORESYS3 une infraestrutura robusta para o seu negócio e conteúdos validados para o seu desenvolvimento. <strong className="text-gray-900">Desenvolvemos sistemas escaláveis com forte atuação na América Latina, Canadá e Europa.</strong>
                                 </p>
                                 <div className="flex gap-4">
                                     <a href="#ebooks369" className="bg-[#FF9900] text-gray-900 font-bold py-3 px-6 rounded-sm hover:bg-[#E68A00] transition-colors shadow-sm">
                                         Ver Loja de E-books
                                     </a>
-                                    <a href="#system369" className="bg-gray-100 text-gray-800 border border-gray-300 font-bold py-3 px-6 rounded-sm hover:bg-gray-200 transition-colors">
-                                        Conhecer SaaS
+                                   <a href="#system369" className="bg-gray-100 text-gray-800 border border-gray-300 font-bold py-3 px-6 rounded-sm hover:bg-gray-200 transition-colors">
+                                        SaaS (Em Breve)
                                     </a>
                                 </div>
                             </div>
                             
                             {/* Espaço para foto do Maurício ou Mockup de Produto */}
                             <div className="flex-1 w-full flex justify-center">
-                                <div className="w-full max-w-md aspect-video bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400">
-                                    [Imagem Corporativa / Mockup do Sistema Aqui]
-                                </div>
-                            </div>
+                          <div className="w-full max-w-md rounded-lg overflow-hidden card-shadow border border-gray-200">
+                        <img src="mockup-sistema.png" alt="Mockup do Sistema em Desenvolvimento" className="w-full h-auto object-cover" />
+                         </div>
+                    </div>
                         </div>
                     </section>
 
@@ -160,8 +160,8 @@
                             {/* Produto 1 */}
                             <div className="bg-white rounded-md p-4 card-shadow flex flex-col">
                                 {/* Local EXATO onde a imagem do Ebook vai entrar */}
-                                <div className="w-full aspect-[3/4] bg-gray-100 rounded-sm mb-4 flex items-center justify-center text-gray-400 border border-gray-200">
-                                    [Capa Pão Artesanal]
+                                <div className="w-full aspect-[3/4] bg-gray-100 rounded-sm mb-4 flex items-center justify-center border border-gray-200 overflow-hidden">
+                               <img src="PAOIMG.png" alt="Capa E-book Pão Artesanal" className="w-full h-full object-cover" />
                                 </div>
                                 <div className="flex-grow">
                                     <p className="text-xs text-gray-500 mb-1">Idioma: PT-PT</p>
@@ -173,21 +173,44 @@
                                         <span className="text-xs text-gray-400">(1.245)</span>
                                     </div>
                                     <div className="flex items-end gap-2 mb-4">
-                                        <span className="text-2xl font-medium text-gray-900">R$ 19,90</span>
+                                        <span className="text-2xl font-medium text-gray-900">R$ 37,90</span>
                                         <span className="text-xs text-green-600 font-medium mb-1">50% OFF</span>
                                     </div>
                                 </div>
                                 {/* Botão estilo e-commerce (alta conversão) */}
-                                <button className="w-full bg-[#3483FA] text-white font-semibold py-2 rounded-sm hover:bg-[#2968C8] transition-colors">
-                                    Comprar agora
-                                </button>
+                                <a href="https://pay.kiwify.com.br/XmXgviV" target="_blank" rel="noopener noreferrer" className="block text-center w-full bg-[#3483FA] text-white font-semibold py-2 rounded-sm hover:bg-[#2968C8] transition-colors">
+                                  Comprar agora
+                                 </a>
                             </div>
 
                             {/* Produto 2 */}
                             <div className="bg-white rounded-md p-4 card-shadow flex flex-col">
-                                <div className="w-full aspect-[3/4] bg-gray-100 rounded-sm mb-4 flex items-center justify-center text-gray-400 border border-gray-200">
-                                    [Capa Relacionamentos]
+                                <div className="w-full aspect-[3/4] bg-gray-100 rounded-sm mb-4 flex items-center justify-center border border-gray-200 overflow-hidden">
+                           <img src="PIZZAIMG.png" alt="Capa E-book Pizza" className="w-full h-full object-cover" />
+                              </div>
+                                <div className="flex-grow">
+                                    <p className="text-xs text-gray-500 mb-1">Idioma: PT-PT</p>
+                                    <h3 className="text-sm font-medium text-gray-800 mb-2 leading-snug hover:text-blue-600 cursor-pointer">
+                                        E-book O Guia Definitivo da Pizza Artesanal
+                                    </h3>
+                                    <div className="flex items-center gap-1 mb-2">
+                                        <span className="text-yellow-400 text-sm">★★★☆☆</span>
+                                        <span className="text-xs text-gray-400">(540)</span>
+                                    </div>
+                                    <div className="flex items-end gap-2 mb-4">
+                                        <span className="text-2xl font-medium text-gray-900">R$ 35,90</span>
+                                    </div>
                                 </div>
+                               <a href="https://pay.kiwify.com.br/1mQQnuA" target="_blank" rel="noopener noreferrer" className="block text-center w-full bg-[#3483FA] text-white font-semibold py-2 rounded-sm hover:bg-[#2968C8] transition-colors">
+                                  Comprar agora
+                                 </a>
+                            </div>
+
+                            {/* Produto Placeholder 3 */}
+                             <div className="bg-white rounded-md p-4 card-shadow flex flex-col">
+                                <div className="w-full aspect-[3/4] bg-gray-100 rounded-sm mb-4 flex items-center justify-center border border-gray-200 overflow-hidden">
+                           <img src="volver.png" alt="Capa E-book Relacionamentos" className="w-full h-full object-cover" />
+                              </div>
                                 <div className="flex-grow">
                                     <p className="text-xs text-gray-500 mb-1">Idioma: ES</p>
                                     <h3 className="text-sm font-medium text-gray-800 mb-2 leading-snug hover:text-blue-600 cursor-pointer">
@@ -198,95 +221,91 @@
                                         <span className="text-xs text-gray-400">(890)</span>
                                     </div>
                                     <div className="flex items-end gap-2 mb-4">
-                                        <span className="text-2xl font-medium text-gray-900">R$ 24,90</span>
+                                        <span className="text-2xl font-medium text-gray-900">$ 24,90</span>
                                     </div>
                                 </div>
-                                <button className="w-full bg-[#3483FA] text-white font-semibold py-2 rounded-sm hover:bg-[#2968C8] transition-colors">
-                                    Comprar ahora
-                                </button>
-                            </div>
-
-                            {/* Produto Placeholder 3 */}
-                            <div className="bg-white rounded-md p-4 card-shadow flex flex-col opacity-60">
-                                <div className="w-full aspect-[3/4] bg-gray-50 rounded-sm mb-4 flex items-center justify-center text-gray-400 border border-gray-200">
-                                    [Em Breve]
-                                </div>
-                                <div className="flex-grow">
-                                    <h3 className="text-sm font-medium text-gray-800 mb-2">Novo Lançamento Programado</h3>
-                                </div>
-                                <button className="w-full bg-gray-200 text-gray-500 font-semibold py-2 rounded-sm cursor-not-allowed">
-                                    Indisponível
-                                </button>
+                               <a href="https://pay.kiwify.com/EvUCuHA" target="_blank" rel="noopener noreferrer" className="block text-center w-full bg-[#3483FA] text-white font-semibold py-2 rounded-sm hover:bg-[#2968C8] transition-colors">
+                                  Comprar agora
+                                 </a>
                             </div>
 
                             {/* Produto Placeholder 4 */}
-                            <div className="bg-white rounded-md p-4 card-shadow flex flex-col opacity-60">
-                                <div className="w-full aspect-[3/4] bg-gray-50 rounded-sm mb-4 flex items-center justify-center text-gray-400 border border-gray-200">
-                                    [Em Breve]
-                                </div>
+                             <div className="bg-white rounded-md p-4 card-shadow flex flex-col">
+                                <div className="w-full aspect-[3/4] bg-gray-100 rounded-sm mb-4 flex items-center justify-center border border-gray-200 overflow-hidden">
+                           <img src="CONQUISTA.png" alt="Capa E-book CONQUISTA" className="w-full h-full object-cover" />
+                              </div>
                                 <div className="flex-grow">
-                                    <h3 className="text-sm font-medium text-gray-800 mb-2">Novo Lançamento Programado</h3>
+                                    <p className="text-xs text-gray-500 mb-1">Idioma: ES</p>
+                                    <h3 className="text-sm font-medium text-gray-800 mb-2 leading-snug hover:text-blue-600 cursor-pointer">
+                                        E-book El Arte de Conquistar con Confianza
+                                    </h3>
+                                    <div className="flex items-center gap-1 mb-2">
+                                        <span className="text-yellow-400 text-sm">★★★★☆</span>
+                                        <span className="text-xs text-gray-400">(653)</span>
+                                    </div>
+                                    <div className="flex items-end gap-2 mb-4">
+                                        <span className="text-2xl font-medium text-gray-900">$ 23,90</span>
+                                    </div>
                                 </div>
-                                <button className="w-full bg-gray-200 text-gray-500 font-semibold py-2 rounded-sm cursor-not-allowed">
-                                    Indisponível
-                                </button>
+                                 <a href="https://pay.kiwify.com/ncIBV4Q" target="_blank" rel="noopener noreferrer" className="block text-center w-full bg-[#3483FA] text-white font-semibold py-2 rounded-sm hover:bg-[#2968C8] transition-colors">
+                                  Comprar agora
+                                 </a>
                             </div>
 
                         </div>
                     </section>
 
-                    {/* 3. SYSTEM369: SaaS e Automações (Estilo Startup / Tabela de Preços Clara) */}
-                    <section id="system369" className="bg-white border-y border-gray-200 py-16 px-4">
-                        <div className="max-w-7xl mx-auto">
-                            <div className="text-center mb-12">
-                                <h2 className="text-3xl font-bold text-gray-900 mb-4">System<span className="text-[#0052CC]">369</span> SaaS</h2>
-                                <p className="text-gray-600 max-w-2xl mx-auto">Infraestrutura em nuvem, automação de dados e gestão de clientes focada no seu crescimento.</p>
-                            </div>
+                    {/* 3. SYSTEM369: SaaS (Em Desenvolvimento / Lista de Espera) */}
+<section id="system369" className="bg-white border-y border-gray-200 py-16 px-4">
+    <div className="max-w-4xl mx-auto text-center">
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">System<span className="text-[#0052CC]">369</span> SaaS</h2>
+        
+        <div className="inline-block bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide mb-6">
+            Em Desenvolvimento
+        </div>
+        
+        <p className="text-gray-600 text-lg max-w-2xl mx-auto mb-10">
+            Nossa infraestrutura em nuvem e automação de dados está sendo construída. Em breve, lançaremos soluções robustas de nível global para empresas no <strong className="text-gray-900">Brasil, América Latina, Canadá e Europa</strong>.
+        </p>
 
-                            <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-                                {/* Plano Básico */}
-                                <div className="bg-white border border-gray-200 rounded-lg p-6 flex flex-col">
-                                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Starter</h3>
-                                    <div className="mb-6"><span className="text-3xl font-bold text-gray-900">R$ 49</span><span className="text-gray-500 text-sm">/mês</span></div>
-                                    <ul className="space-y-3 mb-8 text-gray-600 text-sm flex-grow">
-                                        <li className="flex items-center gap-2"><svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg> Até 100 clientes</li>
-                                        <li className="flex items-center gap-2"><svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg> Automação básica</li>
-                                    </ul>
-                                    <button className="w-full py-2 rounded-sm border border-[#0052CC] text-[#0052CC] font-semibold hover:bg-blue-50 transition-colors">Assinar Starter</button>
-                                </div>
+        {/* Captura de Leads (Lista de Espera) */}
+        <div className="max-w-md mx-auto bg-gray-50 border border-gray-200 rounded-lg p-8 card-shadow">
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Junte-se à Lista de Espera</h3>
+            <p className="text-sm text-gray-500 mb-6">Seja o primeiro a testar nossa plataforma assim que for lançada e garanta condições exclusivas de pioneiro.</p>
+            
+            <form 
+    action="https://formsubmit.co/mauriciomts99@gmail.com" 
+    method="POST" 
+    className="flex flex-col gap-3"
+>
+    {/* Configurações do FormSubmit para não sair da página */}
+    <input type="hidden" name="_next" value="https://mauricioeng.github.io/company/" />
+    <input type="hidden" name="_captcha" value="false" />
 
-                                {/* Plano Pro */}
-                                <div className="bg-white border-2 border-[#0052CC] rounded-lg p-6 flex flex-col relative shadow-lg transform md:-translate-y-2">
-                                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#0052CC] text-white px-3 py-1 rounded-full text-xs font-bold uppercase">Mais Vendido</div>
-                                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Profissional</h3>
-                                    <div className="mb-6"><span className="text-3xl font-bold text-[#0052CC]">R$ 97</span><span className="text-gray-500 text-sm">/mês</span></div>
-                                    <ul className="space-y-3 mb-8 text-gray-600 text-sm flex-grow">
-                                        <li className="flex items-center gap-2"><svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg> Clientes Ilimitados</li>
-                                        <li className="flex items-center gap-2"><svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg> Dashboard Analítico</li>
-                                        <li className="flex items-center gap-2"><svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg> Integração API</li>
-                                    </ul>
-                                    <button className="w-full py-2 rounded-sm bg-[#0052CC] text-white font-semibold hover:bg-blue-800 transition-colors">Testar Grátis</button>
-                                </div>
-
-                                {/* Plano Enterprise */}
-                                <div className="bg-white border border-gray-200 rounded-lg p-6 flex flex-col">
-                                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Corporativo</h3>
-                                    <div className="mb-6"><span className="text-3xl font-bold text-gray-900">R$ 297</span><span className="text-gray-500 text-sm">/mês</span></div>
-                                    <ul className="space-y-3 mb-8 text-gray-600 text-sm flex-grow">
-                                        <li className="flex items-center gap-2"><svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg> Servidor Dedicado</li>
-                                        <li className="flex items-center gap-2"><svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg> Personalização</li>
-                                    </ul>
-                                    <button className="w-full py-2 rounded-sm border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition-colors">Falar com Consultor</button>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
+    <input 
+        type="email" 
+        name="email"
+        placeholder="Digite seu melhor e-mail" 
+        className="w-full px-4 py-3 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-[#0052CC] text-gray-700"
+        required
+    />
+    <button 
+        type="submit" 
+        className="w-full bg-[#0052CC] text-white font-bold py-3 rounded-sm hover:bg-blue-800 transition-colors shadow-sm"
+    >
+        Quero ser avisado
+    </button>
+</form>
+            <p className="text-xs text-gray-400 mt-4">Prometemos não enviar spam. Cancele quando quiser.</p>
+        </div>
+    </div>
+</section>
 
                     {/* Footer Clean */}
                     <footer className="bg-white border-t border-gray-200 py-8">
                         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
                             <div className="text-sm text-gray-500">
-                                &copy; 2026 Ecossistema 369. Desenvolvido por Maurício. Todos os direitos reservados.
+                                &copy; 2026 CORESYS3. Desenvolvido por Maurício. Todos os direitos reservados.
                             </div>
                             <div className="flex items-center gap-4">
                                 <a href="https://instagram.com/ebooks_369" target="_blank" className="text-gray-400 hover:text-gray-900 transition-colors flex items-center gap-1 text-sm">
