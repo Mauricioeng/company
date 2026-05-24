@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizza Artesanal em Casa - Aprenda do Zero e Fature</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Fonte Lora para o toque italiano/rústico e Inter para leitura clara -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lora:ital,wght@0,600;0,700;1,500;1,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2C2A26; /* Preto Carvão/Madeira */
+            --accent-color: #D32F2F; /* Vermelho Tomate Italiano */
+            --accent-light: #F4A261; /* Dourado/Massa Assada */
+            --cta-color: #25D366; /* Verde WhatsApp Conversão */
+            --cta-hover: #1EBE5A;
+            --bg-color: #FDFBF7; /* Fundo Creme/Farinha */
+            --text-dark: #1A1C1A;
+            --text-light: #525C56;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            width: 100%;
+            background: linear-gradient(90deg, #111 0%, #222 100%);
+            color: var(--accent-light);
+            text-align: center;
+            padding: 12px 10px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        /* Hero Section */
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            padding: 60px 20px 40px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .pre-headline {
+            background-color: rgba(211, 47, 47, 0.1);
+            color: #B71C1C;
+            padding: 8px 24px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(211, 47, 47, 0.2);
+        }
+
+        h1 {
+            font-family: 'Lora', serif;
+            font-size: clamp(32px, 5vw, 48px);
+            font-weight: 700;
+            line-height: 1.2;
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            letter-spacing: -0.5px;
+        }
+
+        h1 span {
+            color: var(--accent-color);
+            font-style: italic;
+        }
+
+        .sub-headline {
+            font-size: clamp(16px, 3vw, 20px);
+            color: var(--text-light);
+            font-weight: 400;
+            margin-bottom: 40px;
+            max-width: 800px;
+            line-height: 1.6;
+        }
+
+        .sub-headline strong {
+            color: var(--primary-color);
+        }
+
+        /* Video Mockup */
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            aspect-ratio: 9 / 16;
+            background-color: #000;
+            border-radius: 16px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.25);
+            margin-bottom: 30px;
+            cursor: pointer;
+            border: 4px solid white;
+            overflow: hidden;
+        }
+
+        .video-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .video-wrapper:hover img {
+            opacity: 0.95;
+        }
+
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(211, 47, 47, 0.5);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: pulse-play 2s infinite;
+        }
+
+        @keyframes pulse-play {
+            0% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7); }
+            70% { box-shadow: 0 0 0 20px rgba(211, 47, 47, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0); }
+        }
+
+        .video-wrapper:hover .play-button {
+            transform: translate(-50%, -50%) scale(1.1);
+            background-color: #B71C1C;
+        }
+
+        .play-icon {
+            width: 0;
+            height: 0;
+            border-top: 15px solid transparent;
+            border-bottom: 15px solid transparent;
+            border-left: 25px solid white;
+            margin-left: 8px;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            outline: none;
+            border: none;
+        }
+
+        /* Preço Ancorado */
+        .price-anchor {
+            margin-bottom: 15px;
+            font-size: 16px;
+            color: var(--text-light);
+        }
+        .price-anchor strike { color: var(--accent-color); font-weight: 600; }
+        .price-anchor strong { color: var(--primary-color); font-size: 22px; font-weight: 800; }
+
+        /* CTA Button */
+        .cta-button {
+            background-color: var(--cta-color);
+            color: white;
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: 800;
+            padding: 22px 40px;
+            border-radius: 8px;
+            box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3);
+            text-transform: uppercase;
+            transition: all 0.3s;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pulse-btn 2.5s infinite;
+        }
+
+        .cta-button span.sub-text {
+            font-size: 12px;
+            font-weight: 500;
+            opacity: 0.9;
+            text-transform: none;
+            margin-top: 4px;
+        }
+
+        @keyframes pulse-btn {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .cta-button:hover {
+            background-color: var(--cta-hover);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 25px rgba(37, 211, 102, 0.4);
+        }
+
+        .safe-checkout {
+            margin-top: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: #777;
+            font-weight: 600;
+        }
+
+        .safe-checkout svg { color: var(--accent-color); }
+
+        /* Desconto Call */
+        .discount-highlight {
+            font-size: 15px;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background-color: #FFF;
+            padding: 12px 24px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid #EAEAEA;
+        }
+
+        .discount-highlight span {
+            color: var(--accent-color);
+            font-weight: 800;
+            background: rgba(211, 47, 47, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        /* Secao Beneficios */
+        .benefits-section { width: 100%; background-color: #FFF; padding: 80px 20px; display: flex; flex-direction: column; align-items: center; }
+        .section-title { font-family: 'Lora', serif; font-size: clamp(26px, 4vw, 36px); color: var(--primary-color); margin-bottom: 15px; text-align: center; font-weight: 700; line-height: 1.2; max-width: 800px; }
+        .section-subtitle { text-align: center; color: var(--text-light); margin-bottom: 50px; font-size: 18px; max-width: 700px; }
+        .benefits-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; max-width: 1000px; width: 100%; }
+        
+        .benefit-card { background: var(--bg-color); padding: 40px 30px; border-radius: 16px; text-align: left; border: 1px solid #EAEAEA; transition: transform 0.3s; }
+        .benefit-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.05); border-color: var(--accent-color); }
+        .benefit-icon-wrapper { width: 60px; height: 60px; background-color: var(--accent-color); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 25px; color: white; }
+        .benefit-card h3 { font-size: 20px; color: var(--primary-color); margin-bottom: 15px; font-weight: 800; }
+        .benefit-card p { color: var(--text-light); font-size: 15px; line-height: 1.6; }
+
+        /* Secao Detalhes */
+        .why-make-section { width: 100%; background-color: var(--bg-color); padding: 80px 20px; display: flex; flex-direction: column; align-items: center; }
+        .why-make-container { max-width: 1000px; width: 100%; display: flex; flex-direction: column; gap: 80px; }
+        .content-row { display: flex; align-items: center; gap: 50px; }
+        .content-row.reverse { flex-direction: row-reverse; }
+        .content-img { flex: 1; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.15); position: relative; }
+        .content-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .content-text { flex: 1; text-align: left; }
+        .content-text h3 { font-family: 'Lora', serif; font-size: 28px; color: var(--primary-color); margin-bottom: 20px; font-weight: 700; line-height: 1.3; }
+        .content-text p { color: var(--text-light); font-size: 16px; line-height: 1.7; margin-bottom: 20px; }
+        
+        .check-list { list-style: none; margin-top: 20px; }
+        .check-list li { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 15px; font-weight: 600; color: var(--primary-color); line-height: 1.4;}
+        .check-list svg { color: var(--accent-color); flex-shrink: 0; margin-top: 2px;}
+
+        /* Secao Garantia */
+        .guarantee-section { background-color: var(--primary-color); color: white; width: 100%; padding: 60px 20px; display: flex; justify-content: center; border-top: 4px solid var(--accent-color);}
+        .guarantee-box { max-width: 800px; display: flex; align-items: center; gap: 40px; background: rgba(255,255,255,0.05); padding: 40px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .guarantee-icon { width: 120px; flex-shrink: 0; color: var(--accent-light);}
+        .guarantee-text h3 { font-family: 'Lora', serif; font-size: 26px; color: var(--accent-light); margin-bottom: 15px; }
+        .guarantee-text p { font-size: 15px; line-height: 1.6; color: #E0E0E0; }
+
+        /* Upsell / Mais Produtos */
+        .related-products-section { width: 100%; background-color: #FFF; padding: 80px 20px; display: flex; flex-direction: column; align-items: center; }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 30px; max-width: 1000px; width: 100%; margin-bottom: 40px; }
+        .product-card { background: var(--bg-color); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; border: 1px solid #EAEAEA; transition: transform 0.3s; }
+        .product-card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.06); }
+        .product-thumb { width: 100%; height: 160px; background-color: var(--primary-color); display: flex; align-items: center; justify-content: center; color: var(--accent-light); }
+        .product-info { padding: 24px; display: flex; flex-direction: column; flex-grow: 1; text-align: left; }
+        .product-info h3 { font-size: 18px; color: var(--primary-color); margin-bottom: 10px; font-weight: 800; }
+        .product-info p { font-size: 14px; color: var(--text-light); line-height: 1.5; margin-bottom: 20px; flex-grow: 1; }
+        .product-card-btn { display: block; width: 100%; padding: 12px; background-color: transparent; color: var(--primary-color); text-align: center; text-decoration: none; border-radius: 6px; font-weight: 700; font-size: 14px; border: 2px solid var(--primary-color); transition: background-color 0.2s; }
+        .product-card-btn:hover { background-color: var(--primary-color); color: white; }
+
+        /* Footer */
+        .site-footer { width: 100%; background-color: #0A0D0B; color: #A0A0A0; padding: 60px 20px 40px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .secure-badges { display: flex; align-items: center; gap: 20px; margin-bottom: 30px; flex-wrap: wrap; justify-content: center; }
+        .badge { display: flex; align-items: center; gap: 8px; background-color: rgba(255, 255, 255, 0.05); padding: 12px 20px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); color: #FFF; font-weight: 600; font-size: 14px; }
+        .badge svg { color: var(--cta-color); }
+        .site-footer p { font-size: 13px; line-height: 1.6; max-width: 600px; margin-bottom: 10px; }
+
+        /* Notificacao */
+        .notification { position: fixed; bottom: 20px; left: -350px; width: 320px; background-color: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); padding: 16px; display: flex; align-items: center; gap: 15px; transition: left 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 1000; border-left: 5px solid var(--cta-color); }
+        .notification.show { left: 20px; }
+        .notif-img { width: 48px; height: 48px; background-color: rgba(37, 211, 102, 0.1); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--cta-color); }
+        .notif-text p { margin: 0; font-size: 13px; color: #555; }
+        .notif-text p.name { font-weight: 800; margin-bottom: 2px; color: var(--text-dark); }
+        .notif-text span { font-size: 11px; color: #999; font-weight: 500; }
+
+        /* Chatbot Widget */
+        .chat-widget { position: fixed; bottom: 30px; right: 30px; z-index: 9999; }
+        .chat-button { width: 65px; height: 65px; background-color: var(--cta-color); border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4); cursor: pointer; transition: transform 0.3s, background-color 0.3s; color: white; }
+        .chat-button:hover { transform: scale(1.08); background-color: var(--cta-hover); }
+        .chat-window { position: absolute; bottom: 85px; right: 0; width: 350px; background: white; border-radius: 16px; box-shadow: 0 15px 40px rgba(0,0,0,0.2); overflow: hidden; display: none; flex-direction: column; border: 1px solid #EAEAEA; }
+        .chat-window.open { display: flex; animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .chat-header { background-color: #075E54; color: white; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; }
+        .chat-profile-info { display: flex; align-items: center; gap: 12px; }
+        .chat-avatar { width: 42px; height: 42px; background-color: #128C7E; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; border: 2px solid rgba(255,255,255,0.3); }
+        .chat-status-text .chat-name { font-size: 16px; font-weight: 700; }
+        .chat-status-text .chat-status { font-size: 12px; opacity: 0.9; display: flex; align-items: center; gap: 5px; }
+        .chat-status::before { content: ""; width: 8px; height: 8px; background-color: #4CAF50; border-radius: 50%; }
+        .close-chat { cursor: pointer; font-size: 26px; font-weight: 300; line-height: 1; }
+        .chat-body { padding: 20px; background-color: #E5DDD5; background-image: radial-gradient(rgba(0,0,0,0.05) 1px, transparent 0); background-size: 16px 16px; min-height: 180px; display: flex; flex-direction: column; gap: 12px; }
+        .chat-message { background: white; padding: 12px 16px; border-radius: 10px; border-top-left-radius: 0; font-size: 14px; color: #222; box-shadow: 0 1px 2px rgba(0,0,0,0.1); line-height: 1.5; max-width: 90%; }
+        .chat-message strong.highlight { color: #075E54; font-weight: 800; }
+        .chat-footer { padding: 16px; background: white; border-top: 1px solid #F0F0F0; }
+        .chat-whatsapp-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 14px; background-color: var(--cta-color); color: white; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 15px; transition: 0.2s; }
+        .chat-whatsapp-btn:hover { background-color: var(--cta-hover); }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .content-row, .content-row.reverse { flex-direction: column; gap: 30px; }
+            .content-img { width: 100%; }
+            .guarantee-box { flex-direction: column; text-align: center; padding: 30px 20px; }
+            .cta-button { font-size: 18px; padding: 20px; }
+            .section-title { font-size: 28px; }
+        }
+        @media (max-width: 480px) {
+            h1 { font-size: 30px; }
+            .chat-widget { bottom: 20px; right: 20px; }
+            .chat-window { right: -10px; width: calc(100vw - 20px); }
+            .discount-highlight { flex-direction: column; text-align: center; font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        🍕 OFERTA DE LANÇAMENTO: Mais de 60% DE DESCONTO SOMENTE HOJE - <span id="data-atual"></span>
+    </div>
+
+    <main class="container">
+        <div class="pre-headline">
+            O GUIA DEFINITIVO PARA INICIANTES
+        </div>
+
+        <h1>Aprenda a fazer <span>Pizzas Incríveis</span> em casa do zero absoluto, mesmo usando um forno comum</h1>
+        
+        <p class="sub-headline">
+            Descubra os segredos das massas leves, molhos perfeitos e bordas crocantes (leopardadas). Surpreenda sua família ou <strong>transforme sua cozinha em uma pizzaria delivery altamente lucrativa!</strong>
+        </p>
+
+        <!-- AREA DO VIDEO -->
+        <div class="video-wrapper" id="video-cover" onclick="playVideo()">
+            <img id="thumb-img" src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=800&q=80" alt="Como Fazer Pizza Artesanal">
+            
+            <div class="play-button" id="play-btn">
+                <div class="play-icon"></div>
+            </div>
+
+            <!-- Coloque o nome do seu video de pizza aqui (ex: pizza_video.mp4) -->
+            <video id="meu-video" style="display: none;" controls controlsList="nodownload" playsinline>
+                <source src="pizza_video.mp4" type="video/mp4">
+                Seu navegador não suporta vídeos HTML5.
+            </video>
+        </div>
+
+        <div class="price-anchor">
+            De <strike>R$ 97,00</strike> por apenas <strong>R$ 37,00</strong>
+        </div>
+
+        <a href="https://pay.kiwify.com.br/XmXgviV" class="cta-button"> <!-- Troque o Link da Kiwify pelo link da Pizza -->
+            SIM! QUERO GARANTIR MEU E-BOOK AGORA
+            <span class="sub-text">Acesso Imediato + Receitas de Massas e Molhos</span>
+        </a>
+
+        <div class="safe-checkout">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"></path>
+            </svg>
+            Pagamento 100% Seguro e Criptografado
+        </div>
+        
+        <div class="discount-highlight" onclick="toggleChat()" style="cursor: pointer;">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                <line x1="7" y1="7" x2="7.01" y2="7"></line>
+            </svg>
+            Prefere atendimento humano? Fale conosco no WhatsApp e ganhe <span>15% OFF EXTRA</span>
+        </div>
+    </main>
+
+    <!-- Secao Beneficios (Agitando a Solucao) -->
+    <section class="benefits-section">
+        <h2 class="section-title">Por que fazer Pizza Artesanal é a oportunidade perfeita para você?</h2>
+        <p class="section-subtitle">Você não precisa ser um Chef italiano e nem ter uma cozinha industrial. Com o método certo, sua cozinha atual já tem tudo o que você precisa.</p>
+        
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <div class="benefit-icon-wrapper">
+                    <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 2a10 10 0 0 1 10 10"></path>
+                        <path d="M12 12L2.5 9.5"></path>
+                        <path d="M12 12l4.5-9"></path>
+                    </svg>
+                </div>
+                <h3>Domine a Massa Perfeita</h3>
+                <p>Esqueça a massa dura ou que não cresce. Aprenda a misturar água, sal, fermento e farinha nas proporções exatas para uma massa elástica, leve e fácil de abrir (sem rolo!).</p>
+            </div>
+
+            <div class="benefit-card">
+                <div class="benefit-icon-wrapper">
+                    <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                </div>
+                <h3>Oportunidade de Renda</h3>
+                <p>A pizza é um dos alimentos mais vendidos do mundo. Fazer pizza em casa custa pouco e você pode vendê-las com margens de lucro excelentes usando o planejamento de produção incluso no material.</p>
+            </div>
+
+            <div class="benefit-card">
+                <div class="benefit-icon-wrapper">
+                    <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                </div>
+                <h3>Momentos em Família</h3>
+                <p>Muito mais barato e saboroso do que comprar de fora. Transforme a noite da pizza em uma experiência inesquecível de conexão e elogios na sua própria casa.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Secao: Autoridade / Detalhes (Baseado no PDF) -->
+    <section class="why-make-section">
+        <div class="why-make-container">
+            
+            <div class="content-row">
+                <div class="content-img">
+                    <img src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=800&q=80" alt="Assando pizza">
+                </div>
+                <div class="content-text">
+                    <h3>O Segredo do Assamento no Forno Comum</h3>
+                    <p>Muitas pessoas acham que precisam de um forno a lenha de 500ºC para fazer pizza boa. Isso é um mito! Com as técnicas corretas ensinadas no Módulo 5, seu forno a gás elétrico fará maravilhas.</p>
+                    <ul class="check-list">
+                        <li><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg> Como pré-aquecer corretamente para garantir a crocância do fundo.</li>
+                        <li><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg> O uso da pedra refratária para simular um forno profissional.</li>
+                        <li><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg> A temperatura e o tempo exato para o queijo derreter sem queimar a borda.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="content-row reverse">
+                <div class="content-img">
+                    <img src="https://images.unsplash.com/photo-1590947132387-155cc02f3212?auto=format&fit=crop&w=800&q=80" alt="Massa de Pizza">
+                </div>
+                <div class="content-text">
+                    <h3>Diga Adeus à "Pizza Encharcada"</h3>
+                    <p>Sabe quando a pizza fica mole no meio, soltando água e impossível de pegar com a mão? Isso acontece por erros simples na montagem e no molho.</p>
+                    <p>O <strong>E-book Pizza Artesanal em Casa</strong> te ensina a escorrer os ingredientes certos, preparar um molho de tomate perfeito (sem acidez) e montar as camadas na ordem correta para garantir uma fatia firme e suculenta.</p>
+                    
+                    <a href="https://pay.kiwify.com.br/XmXgviV" style="display:inline-block; margin-top:15px; color:var(--accent-color); font-weight:700; text-decoration:none; font-size:18px;">
+                        Quero Ter Acesso ao Passo a Passo →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Secao Garantia -->
+    <section class="guarantee-section">
+        <div class="guarantee-box">
+            <div class="guarantee-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <path d="M9 12l2 2 4-4"></path>
+                </svg>
+            </div>
+            <div class="guarantee-text">
+                <h3>Risco Zero! Garantia Incondicional de 7 Dias</h3>
+                <p>Nós confiamos tanto no nosso material que oferecemos uma garantia blindada. Adquira o E-book agora, acesse o guia e teste o método na sua cozinha. Se em até 7 dias você achar que o conteúdo não é para você, ou que suas pizzas não melhoraram, devolvemos <strong>100% do seu dinheiro</strong>. Sem burocracia ou perguntas.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Secao: Upsell / Mais Produtos -->
+    <section class="related-products-section">
+        <h2 class="section-title" style="font-size: 26px; margin-bottom:40px;">Você Também Pode Gostar</h2>
+        
+        <div class="products-grid">
+            <div class="product-card">
+                <div class="product-thumb">
+                    <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                    </svg>
+                </div>
+                <div class="product-info">
+                    <h3>Pão Artesanal (Levain)</h3>
+                    <p>Domine os segredos da fermentação natural e faça pães rústicos maravilhosos. O complemento perfeito para quem já domina massas.</p>
+                    <a href="pao.html" class="product-card-btn">Ver E-book</a>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-thumb">
+                    <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <circle cx="9" cy="9" r="1.5"></circle>
+                        <circle cx="14" cy="14" r="1.5"></circle>
+                        <circle cx="15" cy="9" r="1.5"></circle>
+                        <circle cx="9" cy="15" r="1.5"></circle>
+                    </svg>
+                </div>
+                <div class="product-info">
+                    <h3>Cookies Perfeitos</h3>
+                    <p>Adicione sobremesas artesanais ao seu cardápio e aumente o ticket médio do seu cliente com cookies americanos profissionais.</p>
+                    <a href="#produto-1" class="product-card-btn">Ver Material</a>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-thumb">
+                    <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+                    </svg>
+                </div>
+                <div class="product-info">
+                    <h3>Marketing Para Autônomos</h3>
+                    <p>Estratégias de Instagram e TikTok específicas para venda de comidas. Descubra como tirar fotos que vendem sozinhas.</p>
+                    <a href="vendamais.html" class="product-card-btn">Ver Manual</a>
+                </div>
+            </div>
+        </div>
+
+        <a href="Index.html" style="margin-top: 20px; color: var(--primary-color); font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Voltar para a Página Inicial
+        </a>
+    </section>
+
+    <!-- Rodape / Footer -->
+    <footer class="site-footer">
+        <div class="secure-badges">
+            <div class="badge">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                Compra 100% Segura
+            </div>
+            <div class="badge">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+                Dados Criptografados
+            </div>
+            <div class="badge" onclick="toggleChat()" style="cursor:pointer; border-color: var(--cta-color); background: rgba(37, 211, 102, 0.1);">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                </svg>
+                Falar com Atendente
+            </div>
+        </div>
+        
+        <p>Aviso Legal: Os resultados podem variar de acordo com fatores como a qualidade dos ingredientes e o forno de cada usuário. O foco deste material é o ensino das técnicas de pizzaiolo.</p>
+        <p>&copy; 2026 E-book Pizza Artesanal. Autor: Maurício Oliveira. Todos os direitos reservados.</p>
+    </footer>
+
+    <!-- Notificacao de Venda (Social Proof Fake) -->
+    <div class="notification" id="sales-notification">
+        <div class="notif-img">
+            <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+            </svg>
+        </div>
+        <div class="notif-text">
+            <p class="name" id="notif-name">Carlos Eduardo</p>
+            <p>Garantiu o método Pizza Artesanal</p>
+            <span id="notif-time">Há 2 minutos</span>
+        </div>
+    </div>
+
+    <!-- Chatbot WhatsApp -->
+    <div class="chat-widget">
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <div class="chat-profile-info">
+                    <div class="chat-avatar" style="background-color: #B71C1C;">M</div>
+                    <div class="chat-status-text">
+                        <span class="chat-name">Maurício (Autor)</span>
+                        <span class="chat-status">Online</span>
+                    </div>
+                </div>
+                <span class="close-chat" onclick="toggleChat()">×</span>
+            </div>
+            <div class="chat-body">
+                <div class="chat-message">
+                    Olá! Vi que você quer aprender a fazer Pizzas Artesanais incríveis em casa... 🍕
+                </div>
+                <div class="chat-message">
+                    Me chama aqui no WhatsApp! Eu libero um cupom exclusivo de <strong style="color: #B71C1C;">15% de Desconto Adicional</strong> para você começar hoje mesmo.
+                </div>
+            </div>
+            <div class="chat-footer">
+                <a href="https://wa.me/5511942502819?text=Ol%C3%A1%21%20Estou%20na%20p%C3%A1gina%20e%20gostaria%20de%20garantir%20meu%20E-book%20de%20Pizza%20com%20os%2015%25%20de%20desconto." target="_blank" class="chat-whatsapp-btn">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
+                    </svg>
+                    Quero Meu Desconto no WhatsApp
+                </a>
+            </div>
+        </div>
+        
+        <div class="chat-button" onclick="toggleChat()">
+            <svg width="34" height="34" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
+            </svg>
+        </div>
+    </div>
+
+    <script>
+        const dataElement = document.getElementById('data-atual');
+        const hoje = new Date();
+        dataElement.innerText = `${String(hoje.getDate()).padStart(2, '0')}/${String(hoje.getMonth() + 1).padStart(2, '0')}/${hoje.getFullYear()}`;
+
+        // Script Video Embed
+        function playVideo() {
+            document.getElementById('thumb-img').style.display = 'none';
+            document.getElementById('play-btn').style.display = 'none';
+            
+            const video = document.getElementById('meu-video');
+            video.style.display = 'block';
+            video.play(); 
+        }
+
+        // Script Prova Social
+        const nomes = ["Ana Clara", "Carlos E.", "Mariana T.", "Roberto Silva", "Fernanda M.", "Juliana R.", "Paulo Vitor", "Beatriz L."];
+        const tempos = ["Agora mesmo", "Há 2 minutos", "Há 5 minutos", "Há 12 minutos", "Há 24 minutos"];
+        const notifElement = document.getElementById('sales-notification');
+        
+        function showNotification() {
+            document.getElementById('notif-name').innerText = nomes[Math.floor(Math.random() * nomes.length)];
+            document.getElementById('notif-time').innerText = tempos[Math.floor(Math.random() * tempos.length)];
+            notifElement.classList.add('show');
+            setTimeout(() => notifElement.classList.remove('show'), 6000);
+        }
+
+        function triggerRandomNotification() {
+            setTimeout(() => {
+                showNotification();
+                triggerRandomNotification();
+            }, Math.floor(Math.random() * 20000) + 15000);
+        }
+
+        setTimeout(showNotification, 5000);
+        triggerRandomNotification();
+
+        // Script Chatbot
+        function toggleChat() {
+            const chatWindow = document.getElementById('chatWindow');
+            chatWindow.classList.toggle('open');
+        }
+        
+        setTimeout(() => {
+            const chatWindow = document.getElementById('chatWindow');
+            if(!chatWindow.classList.contains('open')) {
+                chatWindow.classList.add('open');
+            }
+        }, 15000);
+
+    </script>
+</body>
+</html>
