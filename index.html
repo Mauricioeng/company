@@ -3,360 +3,655 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CORESYS3 - Tecnologia e Infoprodutos</title>
-    
-    <!-- Tailwind CSS -->
+    <title>CORESYS3 Pro - Software House & Infoprodutos</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- React e ReactDOM -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    
-    <!-- Babel -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        /* Tipografia e Cores Base de E-commerce */
-        body { background-color: #F3F4F6; color: #111827; }
-        
-        /* Sombras suaves padrão Mercado Livre / Amazon */
-        .card-shadow {
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1), 0 1px 5px 0 rgba(0, 0, 0, 0.1);
-            transition: box-shadow 0.2s ease-in-out, transform 0.2s ease;
-        }
-        .card-shadow:hover {
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            transform: translateY(-2px);
-        }
+        * { scrollbar-width: thin; scrollbar-color: #0052CC #F3F4F6; }
+        *::-webkit-scrollbar { width: 8px; }
+        *::-webkit-scrollbar-track { background: #F3F4F6; }
+        *::-webkit-scrollbar-thumb { background: #0052CC; border-radius: 4px; }
 
-        /* Animação do Chatbot */
+        body { overflow-x: hidden; transition: background-color 0.3s, color 0.3s; }
+        body.dark-mode { @apply bg-[#0B0F19] text-gray-100; }
+        
+        .card-shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; }
+        .card-shadow:hover { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15); transform: translateY(-4px); }
+
+        .float-3d { animation: float 6s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
+
+        .glow-bg { position: absolute; border-radius: 50%; z-index: 0; pointer-events: none; opacity: 0.5; }
+        
+        .glass-panel { background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); }
+        body.dark-mode .glass-panel { background: rgba(30,30,30,0.7); border: 1px solid rgba(255,255,255,0.1); }
+
         .typing-dot { animation: typing 1.4s infinite ease-in-out both; }
         .typing-dot:nth-child(1) { animation-delay: -0.32s; }
         .typing-dot:nth-child(2) { animation-delay: -0.16s; }
-        @keyframes typing {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1); }
-        }
+        @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+
+        .shimmer { animation: shimmer 2s infinite; }
+        @keyframes shimmer { 0% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
+
+        .pulse-glow { animation: pulse-glow 2s infinite; }
+        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 20px rgba(0,82,204,0.3); } 50% { box-shadow: 0 0 40px rgba(0,82,204,0.6); } }
+
+        .dark-mode-toggle { position: fixed; top: 80px; right: 20px; z-index: 40; }
+
+        .toast { position: fixed; bottom: 20px; right: 20px; z-index: 100; animation: slideIn 0.3s ease; }
+        @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        .stat-card { background: linear-gradient(135deg, #0052CC 0%, #00A650 100%); }
+        .stat-card.secondary { background: linear-gradient(135deg, #FF9900 0%, #FF6B35 100%); }
     </style>
 </head>
-<body class="font-sans antialiased">
+<body class="font-sans antialiased bg-[#FAFAFA] text-gray-900">
 
     <div id="root"></div>
 
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
+        // ===== BIBLIOTECA DE ÍCONES (SVGs) =====
+        const Icons = {
+            Home: () => <svg className="w-5 h-5 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>,
+            Briefcase: () => <svg className="w-5 h-5 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>,
+            Book: () => <svg className="w-5 h-5 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>,
+            Currency: () => <svg className="w-5 h-5 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>,
+            Plug: () => <svg className="w-5 h-5 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>,
+            Cart: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>,
+            Chart: () => <svg className="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>,
+            Sun: () => <svg className="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>,
+            Moon: () => <svg className="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>,
+            Check: () => <svg className="w-8 h-8 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+            Smile: () => <svg className="w-8 h-8 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+            Gear: () => <svg className="w-8 h-8 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>,
+            Trend: () => <svg className="w-8 h-8 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>,
+            Rocket: () => <svg className="w-10 h-10 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.5 10.5L21 3m-7.5 7.5L10 14m3.5-3.5L10.5 7m0 0L3 14.5m7.5-7.5l-3.5-3.5m0 0L3 3l4 4"></path></svg>,
+            Star: () => <svg className="w-10 h-10 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>,
+            Shield: () => <svg className="w-10 h-10 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>,
+            Card: () => <svg className="w-10 h-10 text-[#0052CC]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>,
+            Chat: () => <svg className="w-10 h-10 text-[#00A650]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>,
+            ChartBig: () => <svg className="w-10 h-10 text-[#FF9900]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>,
+            Cloud: () => <svg className="w-10 h-10 text-[#0052CC]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>,
+            Bell: () => <svg className="w-10 h-10 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>,
+            Zap: () => <svg className="w-10 h-10 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>,
+            ChatbotBtn: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>,
+            BotAvatar: () => <svg className="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>,
+            CodeIcon: () => <svg className="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+        };
+
+        // ===== DADOS DO SITE =====
+        const navLinks = [
+            { id: 'home', label: 'Início', icon: <Icons.Home /> },
+            { id: 'portfolio', label: 'Portfolio', icon: <Icons.Briefcase /> },
+            { id: 'ebooks', label: 'Infoprodutos', icon: <Icons.Book /> },
+            { id: 'precos', label: 'Preços', icon: <Icons.Currency /> },
+            { id: 'integracao', label: 'Integrações', icon: <Icons.Plug /> }
+        ];
+
+        const ebooksData = [
+            { id: 1, title: "Pão Artesanal Premium: O Guia Definitivo", category: "Gastronomia", language: "PT-BR", currency: "R$", price: 24.90, oldPrice: 49.90, rating: 5, reviews: 1245, image: "PAOIMG.png", link: "https://pay.kiwify.com.br/XmXgviV" },
+            { id: 2, title: "Masterclass: Pizza Artesanal com Levain", category: "Gastronomia", language: "PT-BR", currency: "R$", price: 22.90, oldPrice: 39.90, rating: 5, reviews: 540, image: "PIZZAIMG.png", link: "https://pay.kiwify.com.br/1mQQnuA" },
+            { id: 3, title: "Venda Todo Dia: Marketing para Autônomos", category: "Negócios", language: "PT-BR", currency: "R$", price: 16.90, oldPrice: 27.90, rating: 5, reviews: 320, image: "VENDASBOOK.png", link: "https://pay.kiwify.com.br/y7aMOXM" },
+            { id: 4, title: "Doces Gourmet Para Lucrar Alto", category: "Negócios", language: "PT-BR", currency: "R$", price: 19.90, oldPrice: 27.90, rating: 5, reviews: 412, image: "gourmet.png", link: "https://pay.kiwify.com.br/DHXiv7z" },
+            { id: 5, title: "Volver a Elegirnos: Reconstruye tu Relación", category: "Desenvolvimento", language: "ES", currency: "US$", price: 7.99, oldPrice: 15.90, rating: 5, reviews: 890, image: "volver.png", link: "https://pay.kiwify.com/EvUCuHA" },
+            { id: 6, title: "El Arte de Conquistar con Confianza", category: "Desenvolvimento", language: "ES", currency: "US$", price: 6.99, oldPrice: 14.90, rating: 4, reviews: 653, image: "CONQUISTA.png", link: "https://pay.kiwify.com/ncIBV4Q" },
+        ];
+
+        const projectsData = [
+            { id: 1, name: "Sistema ERP Clínica Med+", client: "Clínica Médica São Paulo", category: "Healthcare", tech: ["React", "Node.js", "PostgreSQL", "WhatsApp API"], image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=500&h=300&fit=crop", result: "↑ 45% Eficiência" },
+            { id: 2, name: "PDV Smart Varejo", client: "Rede de Comércios", category: "Retail", tech: ["React Native", "Firebase", "Python"], image: "https://images.unsplash.com/photo-1556656793-08538906a9f8?w=500&h=300&fit=crop", result: "↑ 60% Vendas" },
+            { id: 3, name: "Dashboard BI Analytics", client: "Fintech Brasil", category: "Analytics", tech: ["React", "D3.js", "API REST"], image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&h=300&fit=crop", result: "↑ 80% Insights" },
+            { id: 4, name: "App Mobile Delivery", client: "Startup Food", category: "Mobile", tech: ["React Native", "AWS", "Stripe"], image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=500&h=300&fit=crop", result: "10k+ Downloads" },
+        ];
+
+        const pricingData = [
+            { id: 1, name: "Starter", price: 2500, period: "/mês", features: ["API REST Básica", "Suporte Email", "1 Projeto", "5 Usuários"], icon: "Rocket", popular: false },
+            { id: 2, name: "Professional", price: 7500, period: "/mês", features: ["APIs Avançadas", "Suporte 24/7", "Projetos Ilimitados", "50 Usuários", "Dashboard Analytics"], icon: "Star", popular: true },
+            { id: 3, name: "Enterprise", price: "Custom", period: "Sob Demanda", features: ["Solução Customizada", "Arquiteto Dedicado", "Infraestrutura Própria", "SLA 99.9%", "Integrations Ilimitadas"], icon: "Shield", popular: false },
+        ];
+
+        const integrationsData = [
+            { name: "Stripe", icon: "Card", status: "Ativo" },
+            { name: "WhatsApp API", icon: "Chat", status: "Ativo" },
+            { name: "Google Analytics", icon: "ChartBig", status: "Ativo" },
+            { name: "AWS", icon: "Cloud", status: "Ativo" },
+            { name: "Slack", icon: "Bell", status: "Disponível" },
+            { name: "Zapier", icon: "Zap", status: "Disponível" },
+        ];
+
+        // ===== COMPONENTES =====
+        const Toast = ({ message, type, onClose }) => {
+            useEffect(() => {
+                const timer = setTimeout(onClose, 3000);
+                return () => clearTimeout(timer);
+            }, [onClose]);
+
+            return (
+                <div className={`toast p-4 rounded-lg text-white font-semibold flex items-center gap-2 ${type === 'success' ? 'bg-green-500' : 'bg-red-500'}`}>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                    {message}
+                </div>
+            );
+        };
+
+        const ThemeToggle = ({ isDark, setIsDark }) => (
+            <button 
+                onClick={() => setIsDark(!isDark)}
+                className="dark-mode-toggle bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 p-2 rounded-full hover:scale-110 transition-transform shadow-lg"
+            >
+                {isDark ? <Icons.Sun /> : <Icons.Moon />}
+            </button>
+        );
+
+        const PricingCard = ({ plan }) => {
+            const IconComponent = Icons[plan.icon];
+            return (
+                <div className={`rounded-xl p-6 transition-all flex flex-col ${plan.popular ? 'ring-2 ring-[#0052CC] bg-gradient-to-b from-blue-50 to-white dark:from-gray-800 dark:to-[#111827] scale-105 shadow-2xl' : 'bg-white dark:bg-[#111827] card-shadow'}`}>
+                    <div className="mb-4">
+                        <IconComponent />
+                    </div>
+                    <h3 className="text-2xl font-bold mb-1">{plan.name}</h3>
+                    {plan.popular && <span className="text-xs bg-[#0052CC] text-white px-2 py-1 rounded-full inline-block mb-4 self-start">Mais Popular</span>}
+                    <div className="text-4xl font-black my-4">{typeof plan.price === 'number' ? `R$ ${plan.price}` : plan.price}<span className="text-lg text-gray-500">{plan.period}</span></div>
+                    <ul className="space-y-3 mb-6 flex-grow">
+                        {plan.features.map((f, i) => (
+                            <li key={i} className="flex items-center gap-2 text-sm">
+                                <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                                {f}
+                            </li>
+                        ))}
+                    </ul>
+                    <button className={`w-full py-3 rounded-lg font-bold transition-all ${plan.popular ? 'bg-[#0052CC] text-white hover:bg-blue-800' : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700'}`}>
+                        {plan.popular ? 'Começar Agora' : 'Mais Informações'}
+                    </button>
+                </div>
+            );
+        };
+
+        const StatCard = ({ title, value, change, iconName }) => {
+            const IconComponent = Icons[iconName];
+            return (
+                <div className="stat-card rounded-xl p-6 text-white card-shadow">
+                    <div className="flex justify-between items-start mb-4">
+                        <div>
+                            <p className="text-sm opacity-90">{title}</p>
+                            <h3 className="text-3xl font-black">{value}</h3>
+                        </div>
+                        <IconComponent />
+                    </div>
+                    <p className="text-sm opacity-90 font-medium">↑ {change} este mês</p>
+                </div>
+            );
+        };
+
+        // ===== APP PRINCIPAL =====
         const App = () => {
+            const [isDark, setIsDark] = useState(false);
+            const [activeTab, setActiveTab] = useState('home');
             const [isChatOpen, setIsChatOpen] = useState(false);
             const [chatMessages, setChatMessages] = useState([]);
             const [isTyping, setIsTyping] = useState(false);
-            const chatEndRef = useRef(null);
+            const [toast, setToast] = useState(null);
             
-            const chatOptions = ['Dúvida sobre E-books', 'Planos do System369', 'Falar com Atendimento'];
+            // Filtros Loja
+            const [searchTerm, setSearchTerm] = useState('');
+            const [selectedCategory, setSelectedCategory] = useState('Todas');
+            const [selectedLanguage, setSelectedLanguage] = useState('Todos');
+            
+            const [showBudgetForm, setShowBudgetForm] = useState(false);
+            const [showDashboard, setShowDashboard] = useState(false);
+            const chatEndRef = useRef(null);
 
             useEffect(() => {
-                setChatMessages([{ sender: 'bot', text: 'Olá! Bem-vindo ao CORESYS3. Sou seu assistente virtual. Como posso ajudar nas suas compras hoje?' }]);
-            }, []);
+                document.documentElement.classList.toggle('dark', isDark);
+                document.body.classList.toggle('dark-mode', isDark);
+            }, [isDark]);
+
+            useEffect(() => {
+                if (activeTab === 'home') {
+                    setChatMessages([{ sender: 'bot', text: 'Olá! Sou o Assistente IA da CORESYS3. Como posso ajudar você hoje?' }]);
+                }
+            }, [activeTab]);
 
             useEffect(() => {
                 chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
             }, [chatMessages, isTyping]);
 
-            const handleChatAction = (option) => {
-                setChatMessages(prev => [...prev, { sender: 'user', text: option }]);
+            const handleChatAction = (action) => {
+                setChatMessages(prev => [...prev, { sender: 'user', text: action }]);
                 setIsTyping(true);
-
                 setTimeout(() => {
                     setIsTyping(false);
-                    let botReply = '';
-                    if (option.includes('E-books')) {
-                        botReply = 'Todos os nossos e-books têm entrega imediata por e-mail após a confirmação do pagamento. Aproveite as ofertas de hoje logo abaixo!';
-                    } else if (option.includes('Planos')) {
-                        botReply = 'O System369 é perfeito para quem quer vender digitalmente. Temos planos a partir de R$ 49/mês. Quer agendar uma demonstração?';
-                    } else {
-                        botReply = 'Claro! Por favor, informe seu e-mail e nosso time (ou o próprio Maurício) entrará em contato em breve.';
-                    }
-                    setChatMessages(prev => [...prev, { sender: 'bot', text: botReply }]);
+                    const responses = {
+                        'Solicitar Orçamento': 'Vamos preparar uma proposta customizada para sua empresa. Qual é seu segmento? (Clínica, Comércio, Fintech, Outro)',
+                        'Portfolio': 'Temos +50 projetos entregues com sucesso no Brasil, América Latina, Canadá e Europa! Quer ver algum específico?',
+                        'Preços': 'Nossos planos variam de R$ 2.5k/mês (Starter) até soluções Enterprise customizadas. Qual seu perfil?',
+                        'Integrar APIs': 'Integramos com +30 serviços: Stripe, WhatsApp, Google Analytics, AWS, Slack, Zapier e mais!',
+                        'Técnico': 'Nosso time usa: React, Node.js, Python, PostgreSQL, AWS, Docker, Kubernetes. Qual tecnologia te interessa?'
+                    };
+                    setChatMessages(prev => [...prev, { sender: 'bot', text: responses[action] || 'Como posso ajudá-lo melhor?' }]);
                 }, 1000);
             };
 
+            const handleBudgetSubmit = (e) => {
+                e.preventDefault();
+                setToast({ message: 'Orçamento solicitado com sucesso! Entraremos em contato em 2 horas.', type: 'success' });
+                setShowBudgetForm(false);
+            };
+
+            const categories = ['Todas', 'Gastronomia', 'Negócios', 'Desenvolvimento'];
+            const languages = ['Todos', 'PT-BR', 'ES'];
+
+            const filteredEbooks = ebooksData.filter(e => 
+                e.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
+                (selectedCategory === 'Todas' || e.category === selectedCategory) &&
+                (selectedLanguage === 'Todos' || e.language === selectedLanguage)
+            );
+
             return (
-                <div className="min-h-screen flex flex-col">
-                    
-                    {/* Header Padrão E-commerce (Azul Confiança) */}
-                    <header className="fixed w-full top-0 z-50 bg-[#001E45] shadow-md">
-                        <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-                            {/* Logo */}
-                            <a href="#inicio" className="flex items-center gap-2">
-                                <svg className="w-8 h-8 text-[#00A650]" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                                </svg>
-                                <span className="text-2xl font-black text-white tracking-tight">CORESYS3</span>
-                            </a>
-                            
-                            {/* Busca (Gatilho de Marketplace) */}
-                            <div className="hidden md:flex flex-1 max-w-xl mx-8">
-                                <input type="text" placeholder="Buscar produtos, e-books e soluções..." className="w-full px-4 py-2 rounded-l-sm focus:outline-none text-gray-800" />
-                                <button className="bg-gray-200 px-4 rounded-r-sm hover:bg-gray-300">
-                                    <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                                </button>
+                <div className={`min-h-screen flex flex-col transition-colors duration-300 ${isDark ? 'dark bg-[#0B0F19] text-white' : 'bg-[#FAFAFA] text-gray-900'}`}>
+                    <ThemeToggle isDark={isDark} setIsDark={setIsDark} />
+
+                    {/* HEADER */}
+                    <header className="fixed w-full top-0 z-50 bg-white/80 dark:bg-[#0B0F19]/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 shadow-sm transition-all">
+                        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+                            <div className="flex items-center gap-2 cursor-pointer group" onClick={() => setActiveTab('home')}>
+                                <div className="bg-[#0052CC] text-white p-1.5 rounded-lg group-hover:scale-105 transition-transform">
+                                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                                    </svg>
+                                </div>
+                                <span className="text-2xl font-black tracking-tight">CORESYS3</span>
                             </div>
 
-                            <nav className="hidden md:flex items-center space-x-6 font-medium text-sm text-white">
-                                <a href="#system369" className="hover:text-gray-300 transition-colors">SaaS</a>
-                                <a href="#ebooks369" className="hover:text-gray-300 transition-colors">E-books</a>
-                                <a href="#" className="flex items-center gap-1 hover:text-[#00A650]">
-                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                                    <span>Carrinho</span>
-                                </a>
+                            <nav className="hidden md:flex items-center space-x-8">
+                                {navLinks.map(tab => (
+                                    <button 
+                                        key={tab.id}
+                                        onClick={() => setActiveTab(tab.id)}
+                                        className={`font-semibold text-sm transition-all flex items-center gap-1.5 border-b-2 py-1 ${activeTab === tab.id ? 'border-[#0052CC] text-[#0052CC]' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}
+                                    >
+                                        {tab.icon} {tab.label}
+                                    </button>
+                                ))}
                             </nav>
+
+                            <div className="flex items-center gap-4">
+                                <button onClick={() => setShowDashboard(!showDashboard)} className="hidden md:flex items-center gap-2 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2 rounded-xl font-bold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors border border-gray-200 dark:border-gray-700">
+                                    <Icons.Chart /> Área do Cliente
+                                </button>
+                                <button onClick={() => setActiveTab('ebooks')} className="relative p-2 text-gray-600 dark:text-gray-300 hover:text-[#0052CC] dark:hover:text-[#0052CC] transition-colors">
+                                    <Icons.Cart />
+                                </button>
+                            </div>
                         </div>
                     </header>
 
-                    {/* Espaçamento do Header Fixo */}
-                    <div className="pt-20"></div>
+                    {/* MAIN CONTENT - "flex-1" faz o conteúdo empurrar o rodapé pro final */}
+                    <main className="flex-1 pt-24 pb-16 relative">
+                        
+                        {/* DECORAÇÃO DE FUNDO GLOBAL (Efeito Tech) */}
+                        <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-[#0052CC]/5 to-transparent dark:from-[#0052CC]/10 pointer-events-none"></div>
 
-                    {/* 1. ABA DE INÍCIO: O Criador & Soluções (Estilo Landing Page Corporativa) */}
-                    <section id="inicio" className="bg-white border-b border-gray-200 py-16 px-4">
-                        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12">
-                            <div className="flex-1">
-                                <div className="inline-block bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide mb-4">
-                                    Tecnologia e Educação
-                                </div>
-                                <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-4">
-                                    Soluções escaláveis em <span className="text-[#0052CC]">SaaS</span> e <span className="text-[#0052CC]">Infoprodutos</span>.
-                                </h1>
-                                <p className="text-gray-600 text-lg mb-8">
-                                  O Ecossistema CORESYS3 une infraestrutura robusta para o seu negócio e conteúdos validados para o seu desenvolvimento. <strong className="text-gray-900">Desenvolvemos sistemas escaláveis com forte atuação na América Latina, Canadá e Europa.</strong>
-                                </p>
-                                <div className="flex gap-4">
-                                    <a href="#ebooks369" className="bg-[#FF9900] text-gray-900 font-bold py-3 px-6 rounded-sm hover:bg-[#E68A00] transition-colors shadow-sm">
-                                        Ver Loja de E-books
-                                    </a>
-                                   <a href="#system369" className="bg-gray-100 text-gray-800 border border-gray-300 font-bold py-3 px-6 rounded-sm hover:bg-gray-200 transition-colors">
-                                        SaaS (Em Breve)
-                                    </a>
-                                </div>
+                        {/* HOME REFORMULADA */}
+                        {activeTab === 'home' && (
+                            <div className="space-y-32">
+                                <section className="relative px-4 max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16 mt-10 md:mt-20">
+                                    <div className="flex-1 text-center lg:text-left z-10">
+                                        <div className="inline-flex items-center gap-2 border border-[#0052CC]/30 bg-blue-50/50 dark:bg-blue-900/20 text-[#0052CC] dark:text-blue-400 text-xs font-black uppercase tracking-widest px-4 py-2 rounded-full mb-8 backdrop-blur-sm">
+                                            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                            Global Tech Partner
+                                        </div>
+                                        <h1 className="text-5xl md:text-6xl lg:text-7xl font-black mb-6 leading-[1.1] tracking-tight">
+                                            Engenharia de <br className="hidden md:block" />
+                                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0052CC] to-[#00A650]">Software de Elite</span>
+                                        </h1>
+                                        <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 mb-10 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium">
+                                            Construímos ecossistemas digitais escaláveis, inteligência artificial e plataformas de alto impacto para corporações em mais de 50 países.
+                                        </p>
+                                        <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+                                            <button onClick={() => setIsChatOpen(true)} className="w-full sm:w-auto bg-[#0052CC] text-white font-bold py-4 px-8 rounded-xl shadow-[0_10px_30px_rgba(0,82,204,0.3)] hover:shadow-[0_15px_40px_rgba(0,82,204,0.5)] hover:-translate-y-1 transition-all flex items-center justify-center gap-2">
+                                                <Icons.BotAvatar /> Falar com Especialista
+                                            </button>
+                                            <button onClick={() => setActiveTab('portfolio')} className="w-full sm:w-auto border-2 border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm hover:border-[#0052CC] text-gray-800 dark:text-white font-bold py-4 px-8 rounded-xl hover:-translate-y-1 transition-all flex items-center justify-center gap-2">
+                                                <Icons.Briefcase /> Explorar Cases
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="flex-1 relative w-full max-w-xl mx-auto lg:ml-auto">
+                                        <div className="absolute inset-0 bg-gradient-to-tr from-[#0052CC]/30 to-[#00A650]/30 blur-[100px] rounded-full z-0"></div>
+                                        <div className="relative z-10 glass-panel rounded-2xl p-2 float-3d shadow-2xl border border-white/40 dark:border-gray-700/50">
+                                            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80" alt="Dashboard Analytics" className="rounded-xl shadow-inner object-cover" />
+                                            
+                                            {/* Badge Flutuante */}
+                                            <div className="absolute -bottom-6 -left-6 bg-white dark:bg-[#1A2235] p-4 rounded-xl shadow-xl flex items-center gap-4 border border-gray-100 dark:border-gray-700">
+                                                <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded-lg text-green-600 dark:text-green-400">
+                                                    <Icons.Trend />
+                                                </div>
+                                                <div>
+                                                    <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">Desempenho</p>
+                                                    <p className="text-xl font-black text-gray-900 dark:text-white">+84.5%</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <section className="max-w-7xl mx-auto px-4">
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                        <StatCard title="Projetos Enterprise" value="150+" change="12%" iconName="Check" />
+                                        <StatCard title="Clientes Ativos" value="95+" change="18%" iconName="Smile" />
+                                        <StatCard title="Tecnologias Core" value="35+" change="8%" iconName="Gear" />
+                                        <StatCard title="Aumento de ROI" value="340%" change="25%" iconName="Trend" />
+                                    </div>
+                                </section>
                             </div>
-                            
-                            {/* Espaço para foto do Maurício ou Mockup de Produto */}
-                            <div className="flex-1 w-full flex justify-center">
-                          <div className="w-full max-w-md rounded-lg overflow-hidden card-shadow border border-gray-200">
-                        <img src="mockup-sistema.png" alt="Mockup do Sistema em Desenvolvimento" className="w-full h-auto object-cover" />
-                         </div>
-                    </div>
-                        </div>
-                    </section>
+                        )}
 
-                    {/* 2. EBOOKS369: Infoprodutos (Estilo Mercado Livre / Amazon) */}
-                    <section id="ebooks369" className="py-12 px-4 max-w-7xl mx-auto w-full">
-                        <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-                            Ebooks<span className="text-[#0052CC]">369</span>
-                            <span className="text-sm font-normal text-gray-500 ml-2">Mais vendidos hoje</span>
-                        </h2>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                            
-                            {/* Produto 1 */}
-                            <div className="bg-white rounded-md p-4 card-shadow flex flex-col">
-                                {/* Local EXATO onde a imagem do Ebook vai entrar */}
-                                <div className="w-full aspect-[3/4] bg-gray-100 rounded-sm mb-4 flex items-center justify-center border border-gray-200 overflow-hidden">
-                               <img src="PAOIMG.png" alt="Capa E-book Pão Artesanal" className="w-full h-full object-cover" />
+                        {/* PORTFOLIO REFORMULADO */}
+                        {activeTab === 'portfolio' && (
+                            <section className="px-4 max-w-7xl mx-auto">
+                                <div className="text-center mb-16">
+                                    <div className="inline-block bg-blue-50 dark:bg-blue-900/20 text-[#0052CC] dark:text-blue-400 px-4 py-2 rounded-full text-sm font-bold mb-4 border border-blue-100 dark:border-blue-800">Nosso Trabalho</div>
+                                    <h2 className="text-4xl md:text-5xl font-black mb-6 tracking-tight">Cases de Sucesso Global</h2>
+                                    <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mx-auto font-medium">Não entregamos apenas código. Construímos motores de crescimento estruturados em engenharia de alta performance.</p>
                                 </div>
-                                <div className="flex-grow">
-                                    <p className="text-xs text-gray-500 mb-1">Idioma: PT-PT</p>
-                                    <h3 className="text-sm font-medium text-gray-800 mb-2 leading-snug hover:text-blue-600 cursor-pointer">
-                                        E-book Pão Artesanal Caseiro: O Segredo da Tradição
-                                    </h3>
-                                    <div className="flex items-center gap-1 mb-2">
-                                        <span className="text-yellow-400 text-sm">★★★★★</span>
-                                        <span className="text-xs text-gray-400">(1.245)</span>
-                                    </div>
-                                    <div className="flex items-end gap-2 mb-4">
-                                        <span className="text-2xl font-medium text-gray-900">R$ 37,90</span>
-                                        <span className="text-xs text-green-600 font-medium mb-1">50% OFF</span>
-                                    </div>
+                                <div className="grid md:grid-cols-2 gap-10">
+                                    {projectsData.map(p => (
+                                        <div key={p.id} className="group relative rounded-3xl overflow-hidden bg-white dark:bg-[#111827] border border-gray-100 dark:border-gray-800 transition-all duration-500 hover:shadow-2xl hover:shadow-[#0052CC]/10 hover:-translate-y-2">
+                                            <div className="h-72 relative overflow-hidden">
+                                                <img src={p.image} alt={p.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
+                                                <div className="absolute bottom-6 left-6 right-6">
+                                                    <span className="text-[10px] font-black tracking-widest text-white uppercase bg-[#0052CC] px-3 py-1.5 rounded-md mb-3 inline-block shadow-lg">
+                                                        {p.category}
+                                                    </span>
+                                                    <h3 className="text-2xl md:text-3xl font-black text-white leading-tight mb-1">{p.name}</h3>
+                                                    <p className="text-gray-300 font-medium">{p.client}</p>
+                                                </div>
+                                            </div>
+                                            <div className="p-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+                                                <div className="flex flex-wrap gap-2 flex-1">
+                                                    {p.tech.map((t, i) => (
+                                                        <span key={i} className="text-xs font-bold bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-lg">
+                                                            {t}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                                <div className="sm:text-right border-l-2 border-[#00A650] pl-4 sm:pl-0 sm:border-l-0 sm:border-r-2 sm:pr-4">
+                                                    <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1">Impacto Resultante</p>
+                                                    <p className="text-2xl font-black text-[#00A650]">{p.result}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
-                                {/* Botão estilo e-commerce (alta conversão) */}
-                                <a href="https://pay.kiwify.com.br/XmXgviV" target="_blank" rel="noopener noreferrer" className="block text-center w-full bg-[#3483FA] text-white font-semibold py-2 rounded-sm hover:bg-[#2968C8] transition-colors">
-                                  Comprar agora
-                                 </a>
-                            </div>
+                            </section>
+                        )}
 
-                            {/* Produto 2 */}
-                            <div className="bg-white rounded-md p-4 card-shadow flex flex-col">
-                                <div className="w-full aspect-[3/4] bg-gray-100 rounded-sm mb-4 flex items-center justify-center border border-gray-200 overflow-hidden">
-                           <img src="PIZZAIMG.png" alt="Capa E-book Pizza" className="w-full h-full object-cover" />
-                              </div>
-                                <div className="flex-grow">
-                                    <p className="text-xs text-gray-500 mb-1">Idioma: PT-PT</p>
-                                    <h3 className="text-sm font-medium text-gray-800 mb-2 leading-snug hover:text-blue-600 cursor-pointer">
-                                        E-book O Guia Definitivo da Pizza Artesanal
-                                    </h3>
-                                    <div className="flex items-center gap-1 mb-2">
-                                        <span className="text-yellow-400 text-sm">★★★☆☆</span>
-                                        <span className="text-xs text-gray-400">(540)</span>
+                        {/* E-BOOKS AQUI */}
+                        {activeTab === 'ebooks' && (
+                            <section className="py-10 px-4 max-w-7xl mx-auto">
+                                <div className="mb-10 text-center md:text-left flex flex-col md:flex-row justify-between items-end gap-6">
+                                    <div>
+                                        <h2 className="text-4xl md:text-5xl font-black mb-4 flex items-center justify-center md:justify-start gap-3 tracking-tight">
+                                            <Icons.Book /> Infoprodutos Premium
+                                        </h2>
+                                        <p className="text-gray-600 dark:text-gray-400 text-lg">Materiais de alto valor para alavancar seus resultados e habilidades.</p>
                                     </div>
-                                    <div className="flex items-end gap-2 mb-4">
-                                        <span className="text-2xl font-medium text-gray-900">R$ 35,90</span>
-                                    </div>
-                                </div>
-                               <a href="https://pay.kiwify.com.br/1mQQnuA" target="_blank" rel="noopener noreferrer" className="block text-center w-full bg-[#3483FA] text-white font-semibold py-2 rounded-sm hover:bg-[#2968C8] transition-colors">
-                                  Comprar agora
-                                 </a>
-                            </div>
-
-                            {/* Produto Placeholder 3 */}
-                             <div className="bg-white rounded-md p-4 card-shadow flex flex-col">
-                                <div className="w-full aspect-[3/4] bg-gray-100 rounded-sm mb-4 flex items-center justify-center border border-gray-200 overflow-hidden">
-                           <img src="volver.png" alt="Capa E-book Relacionamentos" className="w-full h-full object-cover" />
-                              </div>
-                                <div className="flex-grow">
-                                    <p className="text-xs text-gray-500 mb-1">Idioma: ES</p>
-                                    <h3 className="text-sm font-medium text-gray-800 mb-2 leading-snug hover:text-blue-600 cursor-pointer">
-                                        E-book Volver a Elegirnos: Reconstruye tu Relación
-                                    </h3>
-                                    <div className="flex items-center gap-1 mb-2">
-                                        <span className="text-yellow-400 text-sm">★★★★☆</span>
-                                        <span className="text-xs text-gray-400">(890)</span>
-                                    </div>
-                                    <div className="flex items-end gap-2 mb-4">
-                                        <span className="text-2xl font-medium text-gray-900">$ 24,90</span>
+                                    <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
+                                        <input 
+                                            type="text" 
+                                            placeholder="Buscar material..." 
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                            className="px-5 py-3 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-[#111827] focus:outline-none focus:ring-2 focus:ring-[#0052CC] shadow-sm font-medium"
+                                        />
+                                        <select 
+                                            value={selectedCategory}
+                                            onChange={(e) => setSelectedCategory(e.target.value)}
+                                            className="px-5 py-3 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-[#111827] focus:outline-none focus:ring-2 focus:ring-[#0052CC] cursor-pointer shadow-sm font-medium"
+                                        >
+                                            {categories.map(c => <option key={c}>{c}</option>)}
+                                        </select>
                                     </div>
                                 </div>
-                               <a href="https://pay.kiwify.com/EvUCuHA" target="_blank" rel="noopener noreferrer" className="block text-center w-full bg-[#3483FA] text-white font-semibold py-2 rounded-sm hover:bg-[#2968C8] transition-colors">
-                                  Comprar agora
-                                 </a>
-                            </div>
 
-                            {/* Produto Placeholder 4 */}
-                             <div className="bg-white rounded-md p-4 card-shadow flex flex-col">
-                                <div className="w-full aspect-[3/4] bg-gray-100 rounded-sm mb-4 flex items-center justify-center border border-gray-200 overflow-hidden">
-                           <img src="CONQUISTA.png" alt="Capa E-book CONQUISTA" className="w-full h-full object-cover" />
-                              </div>
-                                <div className="flex-grow">
-                                    <p className="text-xs text-gray-500 mb-1">Idioma: ES</p>
-                                    <h3 className="text-sm font-medium text-gray-800 mb-2 leading-snug hover:text-blue-600 cursor-pointer">
-                                        E-book El Arte de Conquistar con Confianza
-                                    </h3>
-                                    <div className="flex items-center gap-1 mb-2">
-                                        <span className="text-yellow-400 text-sm">★★★★☆</span>
-                                        <span className="text-xs text-gray-400">(653)</span>
-                                    </div>
-                                    <div className="flex items-end gap-2 mb-4">
-                                        <span className="text-2xl font-medium text-gray-900">$ 23,90</span>
-                                    </div>
+                                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                    {filteredEbooks.map(e => (
+                                        <div key={e.id} className="group relative bg-white dark:bg-[#111827] rounded-2xl overflow-hidden card-shadow flex flex-col border border-gray-100 dark:border-gray-800 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
+                                            
+                                            {/* Tag Desconto Automática */}
+                                            {e.oldPrice && (
+                                                <div className="absolute top-4 right-4 z-10 bg-red-500 text-white text-xs font-black tracking-wider px-3 py-1.5 rounded-lg shadow-lg">
+                                                    -{Math.round((1 - e.price/e.oldPrice) * 100)}%
+                                                </div>
+                                            )}
+                                            
+                                            {/* Área da Capa */}
+                                            <div className="w-full h-72 bg-gradient-to-br from-gray-50 to-gray-200 dark:from-gray-800 dark:to-gray-900 flex items-center justify-center p-8 relative overflow-hidden">
+                                                <div className="absolute inset-0 bg-[#0052CC] opacity-0 group-hover:opacity-5 transition-opacity duration-300"></div>
+                                                <img 
+                                                    src={e.image} 
+                                                    alt={e.title} 
+                                                    className="max-w-full max-h-full object-contain drop-shadow-2xl group-hover:scale-110 group-hover:rotate-2 transition-transform duration-500 rounded-sm" 
+                                                    onError={(event) => event.target.src = "https://via.placeholder.com/400x600.png?text=Capa+Indisponivel"}
+                                                />
+                                            </div>
+                                            
+                                            {/* Container de Informações */}
+                                            <div className="p-6 flex-1 flex flex-col">
+                                                <div className="flex justify-between items-start mb-3">
+                                                    <span className="text-xs font-black tracking-wider text-[#0052CC] uppercase bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded">
+                                                        {e.category}
+                                                    </span>
+                                                    <span className="text-[10px] font-bold bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-300 px-2 py-1 rounded">
+                                                        {e.language}
+                                                    </span>
+                                                </div>
+                                                
+                                                <h3 className="font-bold text-xl mb-3 line-clamp-2 leading-tight group-hover:text-[#0052CC] transition-colors">{e.title}</h3>
+                                                
+                                                <div className="flex items-center gap-2 mb-6">
+                                                    <span className="text-yellow-400 tracking-widest text-sm">{'★'.repeat(e.rating)}{'☆'.repeat(5 - e.rating)}</span>
+                                                    <span className="text-xs text-gray-500 font-semibold">({e.reviews} avaliações)</span>
+                                                </div>
+                                                
+                                                <div className="mt-auto pt-5 border-t border-gray-100 dark:border-gray-800">
+                                                    <div className="flex items-end gap-3 mb-5">
+                                                        <p className="text-3xl font-black text-gray-900 dark:text-white leading-none">
+                                                            {e.currency} {e.price.toFixed(2).replace('.', ',')}
+                                                        </p>
+                                                        {e.oldPrice && (
+                                                            <span className="text-sm text-gray-400 font-medium line-through mb-0.5">
+                                                                {e.currency} {e.oldPrice.toFixed(2).replace('.', ',')}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    
+                                                    <a 
+                                                        href={e.link} 
+                                                        target="_blank" 
+                                                        rel="noopener noreferrer" 
+                                                        className="w-full flex items-center justify-center gap-2 bg-[#0052CC] text-white font-bold py-3.5 rounded-xl hover:bg-blue-800 transition-all shadow-md hover:shadow-xl active:scale-95"
+                                                    >
+                                                        <Icons.Cart /> Desbloquear Acesso
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
-                                 <a href="https://pay.kiwify.com/ncIBV4Q" target="_blank" rel="noopener noreferrer" className="block text-center w-full bg-[#3483FA] text-white font-semibold py-2 rounded-sm hover:bg-[#2968C8] transition-colors">
-                                  Comprar agora
-                                 </a>
+                            </section>
+                        )}
+
+                        {/* PREÇOS MANTÉM O CÓDIGO ATUAL */}
+                        {activeTab === 'precos' && (
+                           <section className="py-10 px-4 max-w-7xl mx-auto">
+                                <div className="text-center mb-16">
+                                    <h2 className="text-4xl font-black mb-4 flex items-center justify-center gap-3">
+                                        <Icons.Currency /> Planos e Preços
+                                    </h2>
+                                    <p className="text-gray-600 dark:text-gray-400 text-lg">Escolha o plano perfeito para sua empresa</p>
+                                </div>
+                                <div className="grid md:grid-cols-3 gap-8">
+                                    {pricingData.map(p => <PricingCard key={p.id} plan={p} />)}
+                                </div>
+                            </section>
+                        )}
+
+                        {/* INTEGRAÇÕES REFORMULADO */}
+                        {activeTab === 'integracao' && (
+                            <section className="px-4 max-w-7xl mx-auto relative mt-10">
+                                {/* Brilho de fundo (Ecossistema) */}
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#0052CC] rounded-full blur-[150px] opacity-10 dark:opacity-20 pointer-events-none"></div>
+                                
+                                <div className="text-center mb-20 relative z-10">
+                                    <div className="inline-block bg-blue-50 dark:bg-blue-900/20 text-[#0052CC] dark:text-blue-400 px-4 py-2 rounded-full text-sm font-bold mb-4 border border-blue-100 dark:border-blue-800">Plug & Play</div>
+                                    <h2 className="text-4xl md:text-5xl font-black mb-6 tracking-tight">Ecossistema Conectado</h2>
+                                    <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mx-auto font-medium">Nossa arquitetura permite integrações nativas com as principais ferramentas do mercado global, centralizando toda sua operação.</p>
+                                </div>
+                                
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-6 relative z-10">
+                                    {integrationsData.map((int, i) => {
+                                        const IntegracaoIcon = Icons[int.icon];
+                                        return (
+                                            <div key={i} className="group bg-white/60 dark:bg-[#111827]/60 backdrop-blur-lg p-10 rounded-3xl flex flex-col items-center justify-center text-center transition-all duration-300 hover:bg-white dark:hover:bg-[#1A2235] hover:-translate-y-2 shadow-sm hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] dark:hover:shadow-[#0052CC]/10 border border-gray-200/50 dark:border-gray-800">
+                                                <div className="w-20 h-20 rounded-2xl bg-gray-50 dark:bg-gray-800 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-inner text-[#0052CC]">
+                                                    <IntegracaoIcon />
+                                                </div>
+                                                <h3 className="font-bold text-xl mb-3 text-gray-900 dark:text-white">{int.name}</h3>
+                                                <span className={`text-xs font-black uppercase tracking-widest px-4 py-1.5 rounded-lg ${int.status === 'Ativo' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'}`}>
+                                                    {int.status}
+                                                </span>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </section>
+                        )}
+                        
+                    </main>
+
+                    {/* FOOTER */}
+                    <footer className="bg-[#0B0F19] text-white py-12 px-4 border-t border-gray-800">
+                        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+                            <div className="text-center md:text-left">
+                                <h3 className="text-2xl font-black mb-2 flex items-center justify-center md:justify-start gap-2">
+                                    <div className="bg-[#0052CC] p-1.5 rounded-lg">
+                                        <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                                    </div>
+                                    CORESYS3
+                                </h3>
+                                <p className="text-gray-400 text-sm font-medium">Software House Global & Soluções Digitais</p>
                             </div>
-
-                        </div>
-                    </section>
-
-                    {/* 3. SYSTEM369: SaaS (Em Desenvolvimento / Lista de Espera) */}
-<section id="system369" className="bg-white border-y border-gray-200 py-16 px-4">
-    <div className="max-w-4xl mx-auto text-center">
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">System<span className="text-[#0052CC]">369</span> SaaS</h2>
-        
-        <div className="inline-block bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide mb-6">
-            Em Desenvolvimento
-        </div>
-        
-        <p className="text-gray-600 text-lg max-w-2xl mx-auto mb-10">
-            Nossa infraestrutura em nuvem e automação de dados está sendo construída. Em breve, lançaremos soluções robustas de nível global para empresas no <strong className="text-gray-900">Brasil, América Latina, Canadá e Europa</strong>.
-        </p>
-
-        {/* Captura de Leads (Lista de Espera) */}
-        <div className="max-w-md mx-auto bg-gray-50 border border-gray-200 rounded-lg p-8 card-shadow">
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Junte-se à Lista de Espera</h3>
-            <p className="text-sm text-gray-500 mb-6">Seja o primeiro a testar nossa plataforma assim que for lançada e garanta condições exclusivas de pioneiro.</p>
-            
-            <form 
-    action="https://formsubmit.co/mauriciomts99@gmail.com" 
-    method="POST" 
-    className="flex flex-col gap-3"
->
-    {/* Configurações do FormSubmit para não sair da página */}
-    <input type="hidden" name="_next" value="https://mauricioeng.github.io/company/" />
-    <input type="hidden" name="_captcha" value="false" />
-
-    <input 
-        type="email" 
-        name="email"
-        placeholder="Digite seu melhor e-mail" 
-        className="w-full px-4 py-3 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-[#0052CC] text-gray-700"
-        required
-    />
-    <button 
-        type="submit" 
-        className="w-full bg-[#0052CC] text-white font-bold py-3 rounded-sm hover:bg-blue-800 transition-colors shadow-sm"
-    >
-        Quero ser avisado
-    </button>
-</form>
-            <p className="text-xs text-gray-400 mt-4">Prometemos não enviar spam. Cancele quando quiser.</p>
-        </div>
-    </div>
-</section>
-
-                    {/* Footer Clean */}
-                    <footer className="bg-white border-t border-gray-200 py-8">
-                        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
-                            <div className="text-sm text-gray-500">
-                                &copy; 2026 CORESYS3. Desenvolvido por Maurício. Todos os direitos reservados.
-                            </div>
-                            <div className="flex items-center gap-4">
-                                <a href="https://instagram.com/ebooks_369" target="_blank" className="text-gray-400 hover:text-gray-900 transition-colors flex items-center gap-1 text-sm">
-                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-                                    @ebooks_369
+                            <div className="text-gray-500 text-sm flex flex-col items-center md:items-end gap-3">
+                                <p className="font-medium">© 2026 CORESYS3. Todos os direitos reservados.</p>
+                                <a href="" target="_blank" className="hover:text-white transition-colors flex items-center gap-2 bg-gray-800 px-4 py-2 rounded-full">
+                                    
                                 </a>
-                                <img src="https://logodownload.org/wp-content/uploads/2014/07/mastercard-logo.png" alt="Mastercard" className="h-4 grayscale opacity-50" />
-                                <img src="https://logodownload.org/wp-content/uploads/2016/10/visa-logo-1.png" alt="Visa" className="h-3 grayscale opacity-50" />
                             </div>
                         </div>
                     </footer>
-
-                    {/* Chatbot (Estilo Suporte de Loja) */}
-                    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
-                        {isChatOpen && (
-                            <div className="bg-white w-[320px] h-[400px] mb-4 rounded-lg flex flex-col border border-gray-200 overflow-hidden card-shadow">
-                                <div className="bg-[#001E45] p-3 flex justify-between items-center text-white">
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                                        <span className="font-semibold text-sm">Atendimento 369</span>
+                    
+                    {/* DASHBOARD MODAL */}
+                    {showDashboard && (
+                        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+                            <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200 dark:border-gray-700">
+                                <div className="p-8 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                                    <h2 className="text-3xl font-black flex items-center gap-3">
+                                        <Icons.Chart /> Dashboard Analítico
+                                    </h2>
+                                    <button onClick={() => setShowDashboard(false)} className="text-gray-500 hover:text-red-500 bg-gray-100 dark:bg-gray-700 rounded-full p-2">
+                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                    </button>
+                                </div>
+                                <div className="p-8 grid md:grid-cols-2 gap-6">
+                                    <div className="stat-card rounded-xl p-6 text-white card-shadow">
+                                        <p className="opacity-90 mb-2 font-medium">Faturamento Este Mês</p>
+                                        <h3 className="text-4xl font-black">R$ 45.230</h3>
+                                        <p className="text-sm opacity-90 mt-2">↑ 23% vs mês anterior</p>
                                     </div>
-                                    <button onClick={() => setIsChatOpen(false)} className="text-gray-300 hover:text-white">
+                                    <div className="stat-card secondary rounded-xl p-6 text-white card-shadow">
+                                        <p className="opacity-90 mb-2 font-medium">E-books Vendidos</p>
+                                        <h3 className="text-4xl font-black">285</h3>
+                                        <p className="text-sm opacity-90 mt-2">↑ 15% vs mês anterior</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* BUDGET FORM MODAL */}
+                    {showBudgetForm && (
+                        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+                            <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full shadow-2xl border border-gray-200 dark:border-gray-700">
+                                <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                                    <h2 className="text-2xl font-black">Solicitar Orçamento</h2>
+                                    <button onClick={() => setShowBudgetForm(false)} className="text-gray-500 hover:text-red-500 bg-gray-100 dark:bg-gray-700 rounded-full p-2">
                                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                     </button>
                                 </div>
-                                
-                                <div className="flex-grow p-4 overflow-y-auto text-sm flex flex-col gap-3 bg-gray-50">
-                                    {chatMessages.map((msg, index) => (
-                                        <div key={index} className={`max-w-[85%] p-2.5 rounded-lg ${msg.sender === 'bot' ? 'bg-white border border-gray-200 text-gray-700 self-start' : 'bg-[#0052CC] text-white self-end'}`}>
-                                            {msg.text}
+                                <form onSubmit={handleBudgetSubmit} className="p-6 space-y-4">
+                                    <input type="text" placeholder="Seu nome" className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:ring-2 focus:ring-[#0052CC] outline-none" required />
+                                    <input type="email" placeholder="Seu e-mail" className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:ring-2 focus:ring-[#0052CC] outline-none" required />
+                                    <select className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:ring-2 focus:ring-[#0052CC] outline-none cursor-pointer" required>
+                                        <option value="">Selecione seu segmento</option>
+                                        <option>Clínica Médica</option>
+                                        <option>Comércio Eletrônico</option>
+                                        <option>Fintech</option>
+                                        <option>Outro</option>
+                                    </select>
+                                    <textarea placeholder="Descreva seu projeto..." rows="4" className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:ring-2 focus:ring-[#0052CC] outline-none"></textarea>
+                                    <button type="submit" className="w-full bg-[#0052CC] text-white font-bold py-3 rounded-lg hover:bg-blue-800 transition-colors">Enviar Solicitação</button>
+                                </form>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* CHATBOT */}
+                    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4">
+                        {isChatOpen && (
+                            <div className="bg-white dark:bg-gray-800 w-[360px] h-[500px] rounded-2xl flex flex-col border border-gray-200 dark:border-gray-700 overflow-hidden shadow-2xl">
+                                <div className="bg-gradient-to-r from-[#0052CC] to-[#00A650] p-4 flex justify-between items-center text-white">
+                                    <div className="flex items-center gap-2">
+                                        <Icons.BotAvatar />
+                                        <div>
+                                            <h3 className="font-bold">IA Assistant</h3>
+                                            <p className="text-[10px] opacity-90 uppercase tracking-widest">Online</p>
+                                        </div>
+                                    </div>
+                                    <button onClick={() => setIsChatOpen(false)} className="text-white hover:bg-white/20 rounded-full p-1 transition-colors">
+                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                    </button>
+                                </div>
+                                <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                                    {chatMessages.map((m, i) => (
+                                        <div key={i} className={`max-w-[85%] p-3 rounded-2xl text-sm ${m.sender === 'bot' ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white self-start rounded-tl-sm' : 'bg-[#0052CC] text-white self-end rounded-tr-sm'}`}>
+                                            {m.text}
                                         </div>
                                     ))}
-                                    
                                     {isTyping && (
-                                        <div className="bg-white border border-gray-200 p-2.5 rounded-lg self-start flex gap-1 items-center h-8">
-                                            <div className="w-1.5 h-1.5 bg-gray-400 rounded-full typing-dot"></div>
-                                            <div className="w-1.5 h-1.5 bg-gray-400 rounded-full typing-dot"></div>
-                                            <div className="w-1.5 h-1.5 bg-gray-400 rounded-full typing-dot"></div>
+                                        <div className="bg-gray-100 dark:bg-gray-700 p-3 rounded-2xl rounded-tl-sm self-start flex gap-1 items-center h-10 w-16">
+                                            <div className="typing-dot w-2 h-2 bg-[#0052CC] rounded-full"></div>
+                                            <div className="typing-dot w-2 h-2 bg-[#0052CC] rounded-full"></div>
+                                            <div className="typing-dot w-2 h-2 bg-[#0052CC] rounded-full"></div>
                                         </div>
                                     )}
                                     <div ref={chatEndRef}></div>
                                 </div>
-
                                 {!isTyping && (
-                                    <div className="p-2 border-t border-gray-200 bg-white flex flex-col gap-1">
-                                        {chatOptions.map((opt, i) => (
-                                            <button 
-                                                key={i} 
-                                                onClick={() => handleChatAction(opt)}
-                                                className="text-xs text-left px-3 py-2 rounded bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
-                                            >
+                                    <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex flex-wrap gap-2 bg-gray-50 dark:bg-gray-800/50">
+                                        {['Solicitar Orçamento', 'Portfolio', 'Preços', 'Integrar APIs', 'Técnico'].map((opt, i) => (
+                                            <button key={i} onClick={() => handleChatAction(opt)} className="text-xs bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 hover:border-[#0052CC] dark:hover:border-[#00A650] hover:text-[#0052CC] dark:hover:text-[#00A650] text-gray-700 dark:text-gray-300 px-3 py-2 rounded-full transition-all font-medium">
                                                 {opt}
                                             </button>
                                         ))}
@@ -364,25 +659,19 @@
                                 )}
                             </div>
                         )}
-                        
-                        <button 
-                            onClick={() => setIsChatOpen(!isChatOpen)}
-                            className="bg-[#00A650] text-white p-3.5 rounded-full shadow-lg hover:bg-[#008A42] transition-colors flex items-center justify-center"
-                        >
-                            {isChatOpen ? (
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                            ) : (
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
-                            )}
+                        <button onClick={() => setIsChatOpen(!isChatOpen)} className="bg-gradient-to-r from-[#0052CC] to-[#00A650] text-white p-4 rounded-full shadow-2xl hover:scale-105 transition-transform pulse-glow flex items-center justify-center">
+                            {isChatOpen ? <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg> : <Icons.ChatbotBtn />}
                         </button>
                     </div>
+
+                    {/* TOAST NOTIFICATION */}
+                    {toast && <Toast {...toast} onClose={() => setToast(null)} />}
 
                 </div>
             );
         };
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
     </script>
 </body>
 </html>
